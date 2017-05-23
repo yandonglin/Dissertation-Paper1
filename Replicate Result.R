@@ -25,7 +25,7 @@ ell<-0.05 ##efficacy lower limit
 cohortsize=1 ##cohort size for each inclusion
 ncohort=64  ##number of cohorts
 start.comb=1 ##starting combination
-n.ar=48     ##size of AR phase
+n.ar=16     ##size of AR phase
 ntrial=1000   ##number of simulated trials 
 set.seed(580)  ##random seed
 ###Specifiy the possible efficacy orderings of the drug combinations
@@ -84,7 +84,7 @@ cat("Method=Original ", "\n");
 #drop.rate <- 0.5
 #cat("Method=Strategy 4 ", "\n");
 #bpocrm.sim(p0,q0,p.skel,q.skel,tul,ell,cohortsize,ncohort,ntrial,start.comb,ar.strategy=4)
-drop.rate <- 0.5
+drop.rate <- 4
 OBJ=bpocrm.sim(p0,q0,p.skel,q.skel,tul,ell,cohortsize,ncohort,ntrial,start.comb,ar.strategy=4)
 Toxicity[count] <- T.curve[i]
 Efficacy[count] <- R.curve[j]
@@ -94,6 +94,6 @@ Treat.Best[count] <- sum(OBJ$Treat.avg[seq(from=Best.lower[count],to=Best.upper[
 Treat.Good[count] <- sum(OBJ$Treat.avg[seq(from=Good.lower[count],to=Good.upper[count])])
   }}
 
-Rate05=data.frame(Toxicity, Efficacy, Select.Best, Select.Good, Treat.Best, Treat.Good, Method="Rate=0.5")
+Rate4=data.frame(Toxicity, Efficacy, Select.Best, Select.Good, Treat.Best, Treat.Good, Method="Rate=4")
 library(xlsx)
-write.xlsx(Rate05, "Simulation Results/Rate05.xlsx")
+write.xlsx(Rate4, "Simulation Results/Rate4.xlsx")
