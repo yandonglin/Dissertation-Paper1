@@ -42,23 +42,28 @@ tuning[tuning$Toxicity=="T4" & tuning$Efficacy=="R1" & tuning$Characteristic =="
 
 #Making Plots for tuning #########################################################################################
 data.plot <- subset.data.frame(tuning, Characteristic ==c("Select.Best"))
-p1 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p1 <- p1+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+
+p1 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p1 <- p1+ylab("Relative Performance")+xlab(expression(delta))+labs(title="Select Best Dose")
+p1 <- +geom_hline(yintercept=0)
 data.plot  <- subset.data.frame(tuning, Characteristic ==c("Select.Good"))
-p2 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p2 <- p2+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p2 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p2 <- p2+ylab("Relative Performance")+xlab(expression(delta))+labs(title="Select Good Dose")
+p2 <- p2+geom_hline(yintercept=0)
 data.plot  <- subset.data.frame(tuning, Characteristic ==c("Treat.Best"))
-p3 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p3 <- p3+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p3 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p3 <- p3+ylab("Relative Performance")+xlab(expression(delta))+labs(title="Treat at Best Dose")
+p3 <- p3+geom_hline(yintercept=0)
 data.plot  <- subset.data.frame(tuning, Characteristic ==c("Treat.Good"))
-p4 <- ggplot(data.plot,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p4 <- p4+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p4 <- ggplot(data.plot,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p4 <- p4+ylab("Relative Performance")+xlab(expression(delta))+labs(title="Treat at Good Dose")
+p4 <- p4+geom_hline(yintercept=0)
 library(cowplot)
 p <- plot_grid(p1, p2, p3,p4, labels=c("A", "B","C","D"), ncol = 2, nrow = 2)
 windows() 
 p
 ###############################################################################################################
-###############################################################################################################
+#Compare to original method####################################################################################
 ###############################################################################################################
 rm(list=ls())
 library(xlsx)
@@ -74,11 +79,11 @@ Rate3 <- read.xlsx(file="Simulation Results/Rate3.xlsx",sheetIndex=1)
 comparison <-rbind(Original16,Original32,Original48,Rate2,Rate3) 
 names(comparison)[1] <- "ID"
 comparison$Method <- as.character(comparison$Method)  
-comparison$Method[comparison$Method=="Original"] <- "A"
-comparison$Method[comparison$Method=="Original32"] <- "B"
-comparison$Method[comparison$Method=="Original48"] <- "C"
-comparison$Method[comparison$Method=="Rate=2"] <- "D2"
-comparison$Method[comparison$Method=="Rate=3"] <- "D3"
+comparison$Method[comparison$Method=="Original"] <- "WT-16"
+comparison$Method[comparison$Method=="Original32"] <- "WT-32"
+comparison$Method[comparison$Method=="Original48"] <- "WT-48"
+comparison$Method[comparison$Method=="Rate=2"] <- "Delta=2"
+comparison$Method[comparison$Method=="Rate=3"] <- "Delta=3"
 comparison <- reshape(comparison, varying=c("Select.Best", "Select.Good", "Treat.Best", "Treat.Good"),
                       v.names="Value",timevar="Characteristic", times=c("Select.Best", "Select.Good", "Treat.Best", "Treat.Good"),
                       new.row.names=1:10000,direction="long")
@@ -92,17 +97,17 @@ comparison <- cbind(comparison, comparison$Value-comparison$Average)
 names(comparison)[8] <- "Relative_Difference"
 
 data.plot <- subset.data.frame(comparison, Characteristic ==c("Select.Best"))
-p1 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p1 <- p1+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p1 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p1 <- p1+ylab("Relative Performance")+xlab("Design Method")+geom_hline(yintercept=0)+labs(title="Select Best Dose")+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
 data.plot  <- subset.data.frame(comparison, Characteristic ==c("Select.Good"))
-p2 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p2 <- p2+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p2 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p2 <- p2+ylab("Relative Performance")+xlab("Design Method")+geom_hline(yintercept=0)+labs(title="Select Good Dose")+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
 data.plot  <- subset.data.frame(comparison, Characteristic ==c("Treat.Best"))
-p3 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p3 <- p3+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p3 <- ggplot(data.plot ,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p3 <- p3+ylab("Relative Performance")+xlab("Design Method")+geom_hline(yintercept=0)+labs(title="Treat at Best Dose")+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
 data.plot  <- subset.data.frame(comparison, Characteristic ==c("Treat.Good"))
-p4 <- ggplot(data.plot,aes(x=Method,y=Relative_Difference))+geom_bar(aes(fill = Method),stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
-p4 <- p4+ylab("Relative Difference")+xlab("xlabel")+geom_hline(yintercept=0)
+p4 <- ggplot(data.plot,aes(x=Method,y=Relative_Difference))+geom_bar(stat = "identity",position = "dodge")+facet_grid( Toxicity~ Efficacy)
+p4 <- p4+ylab("Relative Performance")+xlab("Design Method")+geom_hline(yintercept=0)+labs(title="Treat at Good Dose")+ theme(axis.text.x = element_text(angle = 45, hjust = 1))
 library(cowplot)
 p <- plot_grid(p1, p2, p3,p4, labels=c("A", "B","C","D"), ncol = 2, nrow = 2)
 windows() 
